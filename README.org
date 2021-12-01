@@ -1,0 +1,35 @@
+#+TITLE: README
+
+* What is this?
+
+This is a set of scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
+
+I'm currently re-organizing files and testing out new ideas (content publishing pipeline that doesn't rely on naming conventions for page sub-sections ordering): "visual workflows".
+
+* How is this being used?
+
+An "old/different" version of the scripts is currently used to publish "general" Confluence wiki pages.
+- "Driving views" for structure publishing pipelines:
+  - Which pages do you want to publish?
+  - Do those pages have sub-sections (Heading 1, Heading 2, Heading 3, etc.)
+  - How do possibly order pages sub-sections? Is it just by naming conventions (prefixing the view name and relying on natural sort) or is there another way specify the desired flow?
+- API integration with Confluence for publishing pages:
+  - Lookup page information
+  - Update a given page (text and images content)
+
+* What are the requirements?
+
+- [[https://www.archimatetool.com/download/][Archi 4.9.x]]
+- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x
+- The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in Archi preferences (=Scripting > JavaScript Engine=)
+
+* How can you use this?
+
+Please link the contents of this repository under your jArchi scripts folder (=Preferences >Scriting > Scripts folder:=): if you still don't understand the procedure, please visit the [[https://github.com/archimatetool/archi-scripting-plugin/wiki/jArchi-Quick-Start][jArchi wiki]] or [[https://forum.archimatetool.com/index.php?board=5.0][forum]].
+
+You can then right-click on any diagram in Archi and explore available scripts (=Scripts= context menu).
+
+
+* How to contribute?
+
+The best way to contribute is via a pull request.
