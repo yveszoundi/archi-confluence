@@ -2,7 +2,7 @@
 
 * What is this?
 
-This is a set of scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
+This is a set of [[https://www.archimatetool.com/][Archi]] scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
 
 I'm currently re-organizing files and testing out new ideas (content publishing pipeline that doesn't rely on naming conventions for page sub-sections ordering): "visual workflows".
 
