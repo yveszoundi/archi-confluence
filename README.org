@@ -4,18 +4,22 @@
 
 This is a set of [[https://www.archimatetool.com/][Archi]] scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
 
-I'm currently re-organizing files and testing out new ideas (content publishing pipeline that doesn't rely on naming conventions for page sub-sections ordering): "visual workflows".
+The scripts provide the following functionality:
+- A "convenient" dialog helps you store Confluence settings (URL, API token, etc.).
+- After defining a publishing pipeline, you can update one or multiple pages on Confluence from Archi.
 
 * How is this being used?
 
-An "old/different" version of the scripts is currently used to publish "general" Confluence wiki pages.
-- "Driving views" for structure publishing pipelines:
-  - Which pages do you want to publish?
-  - Do those pages have sub-sections (Heading 1, Heading 2, Heading 3, etc.)
-  - How do possibly order pages sub-sections? Is it just by naming conventions (prefixing the view name and relying on natural sort) or is there another way specify the desired flow?
-- API integration with Confluence for publishing pages:
-  - Lookup page information
-  - Update a given page (text and images content)
+This is to be used for publishing Confluence pages with Archimate diagrams and their associate documentation ('Documentation' in 'Properties').
+Eventually, a slightly modified version of this work might get hooked to a CI/CD pipeline (with [[https://github.com/yveszoundi/archi-humaneimage][Humane Image scripts]], etc.).
+
+** Confluence settings dialog screenshot
+
+[[./images/settings_screenshot.png]]
+
+** Confluence pipeline definition screenshot
+
+[[./images/pipeline_screenshot.png]]
 
 * What are the requirements?
 
@@ -28,6 +32,36 @@ An "old/different" version of the scripts is currently used to publish "general"
 Please link the contents of this repository under your jArchi scripts folder (=Preferences >Scriting > Scripts folder:=): if you still don't understand the procedure, please visit the [[https://github.com/archimatetool/archi-scripting-plugin/wiki/jArchi-Quick-Start][jArchi wiki]] or [[https://forum.archimatetool.com/index.php?board=5.0][forum]].
 
 You can then right-click on any diagram in Archi and explore available scripts (=Scripts= context menu).
+
+** Concepts
+
+An /archi-Confluence page/ is modeled as a =Group= element on a =Sketch= diagram:
+- An /archi-Confluence page/ contains either nested sections (=Group=) or references to diagrams (Canvas, Sketch or default Archimate diagrams).
+- Within an /archi-Confluence page/, the flow between sections is specified via =connections=. All page contents but the last element, must point to something (either a section or diagram reference).
+  
+An /archi-Confluence pipeline/ contains one or multiple /archi-Confluence pages/:
+- If you don't select anything on a sketch diagram, all the 'archi-Confluence pages' will be published.
+- Alternatively, you can select specific /archi-Confluence pages/ to publish.
+
+*The name of archi-Confluence page* is used as Confluence page title (retrieve existing page information by title and Confluence space).
+
+** Confluence integration
+
+Diagram documentation and images are published through the [[https://developer.atlassian.com/server/confluence/confluence-rest-api-examples/][Confluence REST API]].
+- You, create a [[https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/][Confluence API token]] and keep it in your password manager.
+- You, configure Confluence publishing settings in Archi: A utility script provides a dialog that helps persisting Confluence parameters in the Archi =workbench= preferences. This includes the Confluence username, API token, default space key, base URL.
+- You, retrieve Confluence page information (=page id= and =page version=, based on the page title: Page titles are unique in Confluence within a given =space= (/space key/).
+- The scripts, render any documentation associated to a view or 'section' using markdown (view/section documentation is parsed as Markdown and converted to HTML
+- The scripts, export diagrams as PNG binary data
+- The scripts, publishes text and image contents to Confluence pages accordingly to desired sections & sub-sections.
+
+** Design decisions
+
+It is more flexible to use Sketch diagrams than Canvas or regular Archimate views.
+- You can connect directly 'view references' to each other without additional nesting.
+- There's no need to think too much about the allowed structure: there are only groups, view references and connections (minimal validation in place).
+
+For now, the scripts don't auto-create non-existent Confluence pages on the fly: this may or may not be desirable (human errors, etc.).
 
 
 * How to contribute?
