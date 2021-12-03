@@ -4,7 +4,7 @@
 
 This is a set of [[https://www.archimatetool.com/][Archi]] scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
 
-*Additional testing is pending, I'm committing few files incrementally as no major bugs are anticipated (typos, etc.). Some parts have been tested locally.*
+*This has been tested with recent versions of Archi and Confluence Cloud (1000+ build version).*
 
 The scripts provide the following functionality:
 - A "convenient" dialog helps you store Confluence settings (URL, API token, etc.).
@@ -54,7 +54,7 @@ Diagram documentation and images are published through the [[https://developer.a
 - You, configure Confluence publishing settings in Archi: A utility script provides a dialog that helps persisting Confluence parameters in the Archi =workbench= preferences. This includes the Confluence username, API token, default space key, base URL.
 - You, retrieve Confluence page information (=page id= and =page version=, based on the page title: Page titles are unique in Confluence within a given =space= (/space key/).
 - The scripts, render any documentation associated to a view or 'section' using markdown (view/section documentation is parsed as Markdown and converted to HTML
-- The scripts, export diagrams as PNG binary data
+- The scripts, export diagrams as PNG binary data: It is possible to skip uploading diagrams by specifying a =ContentOnly= diagram property ("YES" or "TRUE" values) and in such a case only the diagram /documentation/ is parsed.
 - The scripts, publishes text and image contents to Confluence pages accordingly to desired sections & sub-sections.
 
 ** Design decisions
