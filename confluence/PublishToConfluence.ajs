@@ -98,7 +98,7 @@ function publishToConfluence(opts) {
       for (let i = 0; i < pages.length; i++) {
         let page = pages[i]
         let pageName = page.name
-        let pageInfo = confluence.confluencePageInformation(confluenceSettings.spaceKey, pageName)
+        let pageInfo = confluence.confluencePageInformation(confluenceSettings, pageName)
 
         let buffer = "<div>"
 
@@ -134,7 +134,7 @@ function publishToConfluence(opts) {
     }
 
     if (section.type == drivingviews.VIEW_TYPES.VIEW_REF) {
-      let contentOnlyProp = pageSection.prop("ContentOnly")
+      let contentOnlyProp = sectionElement.prop("ContentOnly")
 
       if (!contentOnlyProp || ( (contentOnlyProp.toLowerCase() != "true") && (contentOnlyProp.toLowerCase() != "yes") ) ) {
         let imageData = $.model.renderViewAsBase64(sectionElement.getRefView(), "PNG", {scale: 1, margin: 20})
