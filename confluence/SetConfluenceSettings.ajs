@@ -1,0 +1,177 @@
+// This is a dialog for storing Confluence settings (API token, base URL, username, etc.)
+
+/**
+ * @typedef {any} JavaClass
+ * @typedef {Object<string, function>} JavaObject
+ */
+"use strict"
+
+if (typeof Java == null) {
+  /**
+   * @type {{type: (s: string) => JavaClass, extend: (c: JavaClass) => JavaClass, super: (o: JavaObject) => JavaObject }}
+   */
+  var Java
+  var shell
+}
+
+
+/** @type JavaClass */ const SWT = Java.type('org.eclipse.swt.SWT')
+/** @type JavaClass */ const LabelWidget = Java.type('org.eclipse.swt.widgets.Label')
+/** @type JavaClass */ const TextWidget = Java.type('org.eclipse.swt.widgets.Text')
+/** @type JavaClass */ const CompositeWidget = Java.type('org.eclipse.swt.widgets.Composite')
+/** @type JavaClass */ const SpinnerWidget = Java.type('org.eclipse.swt.widgets.Spinner')
+/** @type JavaClass */ const GroupWidget = Java.type('org.eclipse.swt.widgets.Group')
+/** @type JavaClass */ const ButtonWidget = Java.type('org.eclipse.swt.widgets.Button')
+/** @type JavaClass */ const GridData = Java.type('org.eclipse.swt.layout.GridData')
+/** @type JavaClass */ const RowData = Java.type('org.eclipse.swt.layout.RowData')
+/** @type JavaClass */ const GridLayout = Java.type('org.eclipse.swt.layout.GridLayout')
+/** @type JavaClass */ const GridDataFactory = Java.type('org.eclipse.jface.layout.GridDataFactory')
+/** @type JavaClass */ const GridLayoutFactory = Java.type('org.eclipse.jface.layout.GridLayoutFactory')
+/** @type JavaClass */ const RowLayoutFactory = Java.type('org.eclipse.jface.layout.RowLayoutFactory')
+/** @type JavaClass */ const RowLayout = Java.type('org.eclipse.swt.layout.RowLayout')
+/** @type JavaClass */ const IMessageProvider = Java.type('org.eclipse.jface.dialogs.IMessageProvider')
+/** @type JavaClass */ const TitleAreaDialog = Java.type("org.eclipse.jface.dialogs.TitleAreaDialog")
+
+const ConfigDialog = Java.extend(TitleAreaDialog)
+const preferenceStore = workbench.getPreferenceStore()
+
+let cfgDialog = {
+
+  /**
+   * Default values
+   */
+  config: {
+    confluenceUsername        : (preferenceStore.getString('confluenceUsername') || ''),
+    confluenceApiToken        : (preferenceStore.getString('confluenceApiToken') || ''),
+    confluenceDefaultSpaceKey : (preferenceStore.getString('confluenceDefaultSpaceKey') || ''),
+    confluenceBaseUrl         : (preferenceStore.getString('confluenceBaseUrl') || '')
+  },
+
+  // widgets memorized to get value from before closing
+  widgets: {},
+
+  /**
+   * Helper to create a widget
+   *
+   * @param {string} name - The widget name
+   * @param {JavaClass} widgetClass - the Java widget class
+   * @param {JavaObject} c - The container
+   * @param {string} label - the label if any for the widget. A Label widget will be created if necessary
+   * @param {(...a: any) => void} init - a function to finalize initialisation (value, etc )
+   */
+  createWidget: function (name, widgetClass, c, label, init, flags = SWT.BORDER) {
+    if (label != null) {
+      let txt = new LabelWidget(c, SWT.NONE)
+      txt.setText(label)
+      GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(txt)
+    }
+    let widget = new widgetClass(c, flags)
+    if (init != null) init(widget)
+    // saving in widgets reference array
+    if (name != null) this.widgets[name] = widget
+  },
+
+  /**
+   * as open() will destroy the widgets on close, saving values to config
+   */
+  saveInput: function () {
+    console.log("start saving input")
+    this.config.confluenceUsername = this.widgets.confluenceUsername.getText().trim()
+    this.config.confluenceApiToken = this.widgets.confluenceApiToken.getText().trim()
+    this.config.confluenceDefaultSpaceKey = this.widgets.confluenceDefaultSpaceKey.getText().trim()
+    this.config.confluenceBaseUrl = this.widgets.confluenceBaseUrl.getText().trim()
+    
+    preferenceStore.setValue('confluenceUsername', this.config.confluenceUsername)
+    preferenceStore.setValue('confluenceApiToken', this.config.confluenceApiToken)
+    preferenceStore.setValue('confluenceDefaultSpaceKey', this.config.confluenceDefaultSpaceKey)
+    preferenceStore.setValue('confluenceBaseUrl', this.config.confluenceBaseUrl)
+
+    console.log("DONE with saveInput")
+  },
+
+
+  open: function() {
+    return (this.dialog.open() == 0)  // OK = 0, Cancel = 1, Closed = -1
+  },
+
+  // NB: Nashorn specific JS syntax! (like java anonymous function)
+  // also not possible to define anything else than inherited method to override. No new method, no property
+  dialog: new ConfigDialog(shell) {
+
+    create: function () {
+      Java.super(cfgDialog.dialog).create()
+      cfgDialog.dialog.setTitle("Confluence settings configuration")
+      cfgDialog.dialog.setMessage("Please define all parameters", IMessageProvider.WARNING);
+    },
+
+    createDialogArea: function (parent) {
+      var cfg = cfgDialog.config
+      let area = Java.super(cfgDialog.dialog).createDialogArea(parent)
+      // the area contains an horizontal sep, and a grid layout
+      let container = new CompositeWidget(area, SWT.NONE)
+      let textWidth = 350
+      GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BEGINNING).applyTo(container)
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).margins(10,10).spacing(10, 5).applyTo(container)
+
+      // layout options
+      let group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,1).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      group.setText('Credentials options')
+      // group.setLayout(new RowLayout (SWT.VERTICAL))
+      GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(group)
+      cfgDialog.createWidget('confluenceUsername', TextWidget, group, "Confluence username",
+                             (w) => {
+                               w.setText(cfg.confluenceUsername)
+                               let wh = w.computeSize(textWidth, SWT.DEFAULT).y
+                               w.setLayoutData(new GridData(textWidth, wh))
+                               w.setMessage('This is usually your email address')
+                             })
+      cfgDialog.createWidget('confluenceApiToken', TextWidget, group, "Confluence API token",
+                             (w) => {
+                               w.setEchoChar("*")
+                               w.setText(cfg.confluenceApiToken)
+                               let wh = w.computeSize(textWidth, SWT.DEFAULT).y
+                               w.setLayoutData(new GridData(textWidth, wh))
+                               w.setMessage('Login to https://id.atlassian.com/manage/api-tokens')
+                             })
+
+
+      group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,1).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      group.setText('Other Options')
+
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).applyTo(group)
+      cfgDialog.createWidget('confluenceBaseUrl', TextWidget, group, "Confluence base URL",
+                             (w) => {
+                               w.setText(cfg.confluenceBaseUrl)
+                               let wh = w.computeSize(textWidth, SWT.DEFAULT).y
+                               w.setLayoutData(new GridData(textWidth, wh))
+                               w.setMessage('Usually like https://confluencedomain.com/wiki/')
+                             })
+      cfgDialog.createWidget('confluenceDefaultSpaceKey', TextWidget, group, "Default space key",
+                             (w) => {
+                               w.setText(cfg.confluenceDefaultSpaceKey)
+                               let wh = w.computeSize(textWidth, SWT.DEFAULT).y
+                               w.setLayoutData(new GridData(textWidth, wh))
+                               w.setMessage('Each Confluence space has a short name (key)')
+                             })
+
+      return area
+    },
+
+    okPressed: function() {
+      cfgDialog.saveInput()
+      Java.super(cfgDialog.dialog).okPressed()
+    }
+  }
+}
+
+
+// Test
+console.clear()
+console.show()
+
+if (cfgDialog.open()) {
+  console.log("Values set!")
+}
+

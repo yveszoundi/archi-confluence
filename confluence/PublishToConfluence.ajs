@@ -1,0 +1,187 @@
+console.show()
+console.clear()
+
+load(__SCRIPTS_DIR__ + "lib/drivingviews.lib.js")
+load(__SCRIPTS_DIR__ + "lib/marked.lib.js")
+load(__SCRIPTS_DIR__ + "lib/confluence.lib.js")
+
+function publishToConfluence(opts) {
+  function _markdownLevel(level) {
+    let result = ""
+
+    for (let i = level; i > 0; i--)
+      result += "#"
+
+    return result
+  }
+
+  function _validateSelection(selectedElements) {
+    const validSelectionTypes = ['diagram-model-group', 'sketch-model']
+
+    for (let selectedElement of selectedElements) {
+      if (!validSelectionTypes.includes(selectedElement.type)) {
+        let message = "An error occurred. Unexpected element '" + selectedElement + "' with type:'" + selectedElement.type + ".'"
+        message = message + "\nIf you would like to consider all the sections on a sketch diagram, just select the sketch diagram."
+        message = message + "\nIf you prefer to specify specific sections on a sketch diagram, then please select 'Group' elements (type=diagram-model-group)."
+        message = message + "\nFurthermore, please also note that only sketch diagrams can be used for driving views!!"
+
+        throw new Error(message)
+      }
+    }
+
+    if (selectedElements.length != 0) {
+      let firstSelection = selectedElements[0]
+      let topLevelDiagramModelGroupIds = []
+
+      if (firstSelection.type == 'diagram-model-group') {
+        $(firstSelection.view).children().each(function (e) {
+          if (e.type == 'diagram-model-group')
+            topLevelDiagramModelGroupIds.push(e.id)
+        })
+      }
+
+      for (let selectedElement of selectedElements) {
+        if (selectedElement.type == 'diagram-model-group' && !topLevelDiagramModelGroupIds.includes(selectedElement.id))
+          throw new Error("The element:'" + selectedElement + "' with id:'" + selectedElement.id + "' must be a top-level group in the sketch diagram!")
+      }
+    }
+  }
+
+  function _confluenceSettingsAreValid(currentConfluenceSettings) {
+    if (!currentConfluenceSettings.username || currentConfluenceSettings.username.trim().length == 0) {
+      console.log("Error: Please use the SetConfluenceSettings.ajs script to configure your Confluence username.")
+      return false
+    }
+
+    if (!currentConfluenceSettings.apiToken || currentConfluenceSettings.apiToken.trim().length == 0) {
+      console.log("Error: Please use the SetConfluenceSettings.ajs script to configure your Confluence API token.")
+      return false
+    }
+
+    if (!currentConfluenceSettings.baseUrl || currentConfluenceSettings.baseUrl.trim().length == 0) {
+      console.log("Error: Please use the SetConfluenceSettings.ajs script to configure your Confluence username.")
+      return false
+    }
+
+    if (!currentConfluenceSettings.spaceKey || currentConfluenceSettings.spaceKey.trim().length == 0) {
+      console.log("Error: Please use the SetConfluenceSettings.ajs script to configure your Confluence spaceKey.")
+      console.log("Alternatively you can define an Archimate model property called ConfluenceSpaceKey.")
+      return false
+    }
+
+    return true
+  }
+
+  function _triggerPublishPipeline(confluenceSettings, options) {
+    try {
+      let opts = { debug: true, imageThumbnailHeight: 300 }
+      Object.assign(opts, options || {})
+      let JString = Java.type("java.lang.String")
+
+      let selectedElements = $(selection)
+      _validateSelection(selectedElements)
+
+      let pageBlocks = []
+
+      for (let selectedElement of selectedElements) {
+        if (selectedElement.type == 'sketch-model') {
+          pageBlocks = $(selectedElement).children().filter(function (elem) {
+            return elem.type == 'diagram-model-group'
+          })
+        } else {
+          pageBlocks.push(selectedElement)
+        }
+      }
+
+      let pages = drivingviews.sections(pageBlocks)
+
+      for (let i = 0; i < pages.length; i++) {
+        let page = pages[i]
+        let pageName = page.name
+        let pageInfo = confluence.confluencePageInformation(confluenceSettings.spaceKey, pageName)
+
+        let buffer = "<div>"
+
+        if (opts.debug == true)
+          console.log("\n+Page: '" + page.name + "' will published.")
+
+        buffer = buffer + _printSection(confluenceSettings, page, pageInfo, opts)
+        buffer = buffer + "</div>"
+
+        let newPageVersion = (pageInfo.pageVersion + 1)
+
+        confluence.updateConfluencePageContents(confluenceSettings, pageInfo.pageId, pageName, newPageVersion, buffer)
+      }
+    } catch (e) {
+      console.log("Error: An error occured.", e.message)
+    }
+  }
+
+  function _printSection(confluenceSettings, section, pageInfo, opts) {
+    let sectionBuffer = ""
+    let sectionElement = $("#" + section.id).first()
+    let sectionLevelText = _markdownLevel(section.level)
+
+    if (sectionElement.documentation && sectionElement.documentation.trim().length != 0) {
+      let sectionDocumentation = sectionLevelText + " " + sectionElement.documentation
+      let sectionHtml = marked(sectionDocumentation) + "\n"
+      sectionBuffer = sectionBuffer + sectionHtml
+    }
+
+    if (opts.debug == true && section.level != 0) {
+      let messagePrefix = sectionLevelText.replaceAll("#", '+')
+      console.log(messagePrefix + "Section: " + section.name + ".")
+    }
+
+    if (section.type == drivingviews.VIEW_TYPES.VIEW_REF) {
+      let contentOnlyProp = pageSection.prop("ContentOnly")
+
+      if (!contentOnlyProp || ( (contentOnlyProp.toLowerCase() != "true") && (contentOnlyProp.toLowerCase() != "yes") ) ) {
+        let imageData = $.model.renderViewAsBase64(sectionElement.getRefView(), "PNG", {scale: 1, margin: 20})
+        let imageName = sectionElement.getRefView().name + ".png"
+        let imageBytes = confluence.imageDataBytesFromBase64(imageData)
+        confluence.attachImage(confluenceSettings, pageInfo.pageId, imageName, imageBytes)
+        let imageHtml = "<ac:image ac:height=\"" + opts.imageThumbnailHeight + "\"><ri:attachment ri:filename=\"" + imageName + "\"/></ac:image>"
+
+        sectionBuffer = sectionBuffer + imageHtml
+      }
+    }
+
+    for (let subSection of section.children)
+      sectionBuffer = sectionBuffer + _printSection(confluenceSettings, subSection, pageInfo, opts)
+
+    return sectionBuffer
+  }
+
+  function _readConfluenceSettings() {
+    const preferenceStore = workbench.getPreferenceStore()
+
+    let confluenceSettings = {
+      username : preferenceStore.getString('confluenceUsername'),
+      apiToken : preferenceStore.getString('confluenceApiToken'),
+      spaceKey : preferenceStore.getString('confluenceDefaultSpaceKey'),
+      baseUrl  : preferenceStore.getString('confluenceBaseUrl')
+    }
+
+    let spaceKey = model.prop("ConfluenceSpakeKey")
+
+    if (spaceKey && spaceKey.trim().length != 0)
+      confluenceSettings.spaceKey = spaceKey.trim()
+
+    return confluenceSettings
+  }
+
+  let confluenceSettings = _readConfluenceSettings()
+
+  if (_confluenceSettingsAreValid(confluenceSettings))
+    _triggerPublishPipeline(confluenceSettings, opts)
+}
+
+console.log("START> Publishing pipeline.")
+
+publishToConfluence({
+  debug: true,
+  imageThumbnailHeight: 300
+})
+
+console.log("\nEND> Publishing pipeline.")

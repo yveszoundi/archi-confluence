@@ -4,6 +4,8 @@
 
 This is a set of [[https://www.archimatetool.com/][Archi]] scripts for [[https://www.atlassian.com/software/confluence][Confluence]] integration. Often diagrams need to be shared via multiple channels (presentation decks, Confluence pages, chat, etc.).
 
+*Additional testing is pending, I'm committing few files incrementally as no major bugs are anticipated (typos, etc.). Some parts have been tested locally.*
+
 The scripts provide the following functionality:
 - A "convenient" dialog helps you store Confluence settings (URL, API token, etc.).
 - After defining a publishing pipeline, you can update one or multiple pages on Confluence from Archi.
