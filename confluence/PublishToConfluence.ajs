@@ -30,7 +30,7 @@ function publishToConfluence(opts) {
         let message = "An error occurred. Unexpected element '" + selectedElement + "' of type:'" + selectedElement.type + ".'"
         message = message + "\nIf you would like to consider all the sections on a sketch diagram, just select the sketch diagram."
         message = message + "\nIf you prefer to specify specific sections on a sketch diagram, then please select 'Group' elements (type=diagram-model-group)."
-        message = message + "\nFurthermore, please also note that only sketch diagrams can be used for driving views!!"
+        message = message + "\nFurthermore, please also note that only sketch diagrams can be used for driving views!"
 
         throw new Error(message)
       }
