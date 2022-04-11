@@ -9,8 +9,7 @@ function publishToConfluence(opts) {
   function _markdownLevel(level) {
     let result = ""
 
-    for (let i = level; i > 0; i--)
-      result += "#"
+    for (let i = level; i > 0; i--) result += "#"
 
     return result
   }
@@ -129,9 +128,10 @@ function publishToConfluence(opts) {
     let sectionElement = $("#" + section.id).first()
     let sectionLevelText = _markdownLevel(section.level)
 
+    sectionBuffer = sectionBuffer + marked(sectionLevelText + " " + sectionElement.name) + "\n"
+    
     if (sectionElement.documentation && sectionElement.documentation.trim().length != 0) {
-      let sectionDocumentation = sectionLevelText + " " + sectionElement.documentation
-      let sectionHtml = marked(sectionDocumentation) + "\n"
+      let sectionHtml = marked(sectionElement.documentation) + "\n"
       sectionBuffer = sectionBuffer + sectionHtml
     }
 
