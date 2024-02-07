@@ -1,9 +1,9 @@
 console.show()
 console.clear()
 
-load(__SCRIPTS_DIR__ + "lib/drivingviews.lib.js")
-load(__SCRIPTS_DIR__ + "lib/marked.lib.js")
-load(__SCRIPTS_DIR__ + "lib/confluence.lib.js")
+load(__SCRIPTS_DIR__ + "archi-confluence/lib/drivingviews.lib.js")
+load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
+load(__SCRIPTS_DIR__ + "archi-confluence/lib/confluence.lib.js")
 
 function publishToConfluence(opts) {
   function _markdownLevel(level) {
