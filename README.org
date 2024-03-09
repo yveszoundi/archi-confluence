@@ -65,6 +65,11 @@ It is more flexible to use Sketch diagrams than Canvas or regular Archimate view
 
 For now, the scripts don't auto-create non-existent Confluence pages on the fly: this may or may not be desirable (human errors, etc.).
 
+* Can you customize text rendering?
+
+Behind the scenes, a markdown renderer will interpret text as [[https://www.markdownguide.org/basic-syntax/][Markdown]] and convert it to HTML.
+
+Essentially, you can use any valid markdown markup supported by [[https://marked.js.org/][marked.js]].
 
 * How to contribute?
 
