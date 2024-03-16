@@ -67,9 +67,10 @@ For now, the scripts don't auto-create non-existent Confluence pages on the fly:
 
 * Can you customize text rendering?
 
-Behind the scenes, a markdown renderer will interpret text as [[https://www.markdownguide.org/basic-syntax/][Markdown]] and convert it to HTML.
+When a diagram has a non-empty "Documentation" property, the documentation will be published along with its diagram, for a given "Archimate View".
 
-Essentially, you can use any valid markdown markup supported by [[https://marked.js.org/][marked.js]].
+- Behind the scenes, a markdown renderer will interpret Documentation text as [[https://www.markdownguide.org/basic-syntax/][Markdown]] and convert it to HTML.
+- Essentially, you can use any valid markdown markup supported by [[https://marked.js.org/][marked.js]] (tables, bullet lists, etc.).
 
 * How to contribute?
 
