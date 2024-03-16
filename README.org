@@ -7,12 +7,12 @@ This is a set of [[https://www.archimatetool.com/][Archi]] scripts for [[https:/
 *This has been tested with recent versions of Archi and Confluence Cloud (1000+ build version).*
 
 The scripts provide the following functionality:
-- A "convenient" dialog stores Confluence settings (URL, API token, etc.).
-- A "pipeline definition" can be created for updating one or multiple pages on Confluence directly from Archi.
+- A "convenient" dialog stores =Confluence= settings (URL, API token, etc.)
+- A "pipeline definition" can be created for updating one or multiple pages to =Confluence= directly from =Archi=
 
 * How is this being used?
 
-This is used for publishing Confluence pages with Archimate diagrams and their associate documentation (=Documentation= text in diagram =Properties=).
+This is used for publishing =Confluence= pages with [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams and their associated documentation (=Documentation= text in diagram =Properties=).
 Eventually, a slightly modified version of this work might get hooked to a CI/CD pipeline (with [[https://github.com/yveszoundi/archi-humaneimage][Humane Image scripts]], etc.).
 
 ** Confluence settings dialog screenshot
@@ -25,15 +25,15 @@ Eventually, a slightly modified version of this work might get hooked to a CI/CD
 
 * What are the requirements?
 
-- [[https://www.archimatetool.com/download/][Archi 4.9.x]]
-- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x
+- [[https://www.archimatetool.com/download/][Archi 4.9.x]] or later
+- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x or later
 - The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in Archi preferences (=Scripting > JavaScript Engine=)
 
 * How can you use this?
 
 Please link the contents of this repository under your jArchi scripts folder (=Preferences >Scriting > Scripts folder:=): if you still don't understand the procedure, please visit the [[https://github.com/archimatetool/archi-scripting-plugin/wiki/jArchi-Quick-Start][jArchi wiki]] or [[https://forum.archimatetool.com/index.php?board=5.0][forum]].
 
-You can then right-click on any diagram in Archi and explore available scripts (=Scripts= context menu).
+You can then right-click on any diagram in =Archi= and explore available scripts (=Scripts= context menu).
 
 ** Concepts
 
