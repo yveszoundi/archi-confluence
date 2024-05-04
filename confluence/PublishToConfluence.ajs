@@ -2,6 +2,21 @@ console.show()
 console.clear()
 
 load(__SCRIPTS_DIR__ + "archi-confluence/lib/drivingviews.lib.js")
+
+function loadMarked() {
+  try {
+    return require(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
+  } catch (err) {
+    return load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
+  }
+}
+
+let tmp = loadMarked()
+
+if (tmp != true) {
+  globalThis.marked = tmp
+}
+
 load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
 load(__SCRIPTS_DIR__ + "archi-confluence/lib/confluence.lib.js")
 
