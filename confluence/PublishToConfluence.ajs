@@ -3,21 +3,24 @@ console.clear()
 
 load(__SCRIPTS_DIR__ + "archi-confluence/lib/drivingviews.lib.js")
 
-function loadMarked() {
+// Need to use the 'require' function when CommonJS support is enabled in Archi preferences
+// See also https://forum.archimatetool.com/index.php?topic=1502.msg7742#msg7742
+// See also https://github.com/archimatetool/archi-scripting-plugin/wiki/Using-Node.js-modules
+function loadMarkedLibrary() {
   try {
     return require(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
   } catch (err) {
-    return load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
+    load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
+    return null
   }
 }
 
-let tmp = loadMarked()
+let loadMarkedLibraryResult = loadMarkedLibrary()
 
-if (tmp != true) {
-  globalThis.marked = tmp
-}
+// Store marked function in global scope explicitly when CommonJS support is enabled
+if (loadMarkedLibraryResult)
+  globalThis.marked = loadMarkedLibraryResult
 
-load(__SCRIPTS_DIR__ + "archi-confluence/lib/marked.lib.js")
 load(__SCRIPTS_DIR__ + "archi-confluence/lib/confluence.lib.js")
 
 function publishToConfluence(opts) {
