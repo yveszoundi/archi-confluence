@@ -37,15 +37,15 @@ You can then right-click on any diagram in =Archi= and explore available scripts
 
 ** Concepts
 
-An /archi-Confluence page/ is modeled as a =Group= element on a =Sketch= diagram:
-- An /archi-Confluence page/ contains either nested sections (=Group=) or references to diagrams (Canvas, Sketch or default Archimate diagrams).
-- Within an /archi-Confluence page/, the flow between sections is specified via =connections=. All page contents but the last element, must point to something (either a section or diagram reference).
+An existing Confluence page is modeled as a top-level =Group= element on a =Sketch= diagram:
+- A page can have direct sub-sections containing Archi view references (Canvas, Sketch or default Archimate diagrams), or you can specify additional nesting/grouping of view references.
+- Within a page or a section, the order of contents appearance is specified via =connections=. All page contents but the last element, must point to something (either a section or diagram reference).
   
-An /archi-Confluence pipeline/ contains one or multiple /archi-Confluence pages/:
-- If you don't select anything on a sketch diagram, all the 'archi-Confluence pages' will be published.
-- Alternatively, you can select specific /archi-Confluence pages/ to publish.
+You can have multiple Confluence pages in the same "Publishing pipeline" on a sketch diagram
+- If you don't select anything on a sketch diagram, all the 'pages' will be published.
+- Alternatively, you can select specific /pages/ to publish.
 
-Notes: *The name of archi-Confluence page* is used as Confluence page title (retrieve existing page information by title and Confluence space). Maybe it will be possible to override it via a diagram property in the future.
+  [[./images/pipeline_concepts.png]]
 
 ** Confluence integration
 
