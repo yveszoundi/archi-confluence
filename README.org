@@ -52,18 +52,18 @@ Notes: *The name of archi-Confluence page* is used as Confluence page title (ret
 Diagram documentation and images are published through the [[https://developer.atlassian.com/server/confluence/confluence-rest-api-examples/][Confluence REST API]].
 - You, create a [[https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/][Confluence API token]] and keep it in your password manager.
 - You, configure Confluence publishing settings in Archi: A utility script provides a dialog that helps persisting Confluence configuration in the Archi =workbench= preferences.
-- You, retrieve Confluence page information (=page id= and =page version=, based on the page title: Page titles are unique in Confluence within a given =space= (/space key/).
+- You, match existing confluence page titles to names of top-level =Group= objects: [[https://community.atlassian.com/t5/Confluence-questions/Create-same-name-pages-within-a-space/qaq-p/1216332][Page titles are unique in Confluence within a given space]] (/space key/).
 - The scripts, render any documentation associated to a view or 'section' using markdown (view/section documentation is parsed as Markdown and converted to HTML
 - The scripts, export diagrams as PNG binary data: It is possible to skip uploading diagrams by specifying a =ContentOnly= diagram property ("YES" or "TRUE" values).
 - The scripts, publish text and image contents to Confluence accordingly to desired sections.
 
 ** Design decisions
 
-It is more flexible to use Sketch diagrams than Canvas or regular Archimate views.
+It is more flexible to use =Sketch= diagrams than =Canvas= or =regular Archimate views=.
 - You can connect directly 'view references' to each other, without additional nesting.
 - The allowed structure is simple: groups, view references & connections.
 
-For now, the scripts don't auto-create non-existent Confluence pages on the fly: this may or may not be desirable (human errors, etc.).
+For now, the scripts don't auto-create non-existent Confluence pages: this may or may not be desirable (human errors, etc.).
 
 * Can you customize text rendering?
 
