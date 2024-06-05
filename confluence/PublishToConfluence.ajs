@@ -188,7 +188,7 @@ function publishToConfluence(opts) {
       baseUrl  : preferenceStore.getString('confluenceBaseUrl')
     }
 
-    let spaceKey = model.prop("ConfluenceSpakeKey")
+    let spaceKey = model.prop("ConfluenceSpaceKey")
 
     if (spaceKey && spaceKey.trim().length != 0)
       confluenceSettings.spaceKey = spaceKey.trim()
